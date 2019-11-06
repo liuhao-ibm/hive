@@ -10,9 +10,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	netopv1 "github.com/openshift/cluster-network-operator/pkg/apis/networkoperator/v1"
+	"github.com/openshift/hive/pkg/apis"
+	hivev1 "github.com/openshift/hive/pkg/apis/hive/v1alpha1"
+	"github.com/openshift/hive/pkg/constants"
+	"github.com/openshift/hive/pkg/resource"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -22,12 +26,6 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/utils/pointer"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
-
-	netopv1 "github.com/openshift/cluster-network-operator/pkg/apis/networkoperator/v1"
-	"github.com/openshift/hive/pkg/apis"
-	hivev1 "github.com/openshift/hive/pkg/apis/hive/v1alpha1"
-	"github.com/openshift/hive/pkg/constants"
-	"github.com/openshift/hive/pkg/resource"
 )
 
 const longDesc = `
@@ -94,31 +92,31 @@ var (
 
 // Options is the set of options to generate and apply a new cluster deployment
 type Options struct {
-	Name                     string
-	Namespace                string
-	SSHPublicKeyFile         string
-	SSHPublicKey             string
-	SSHPrivateKeyFile        string
-	BaseDomain               string
-	PullSecret               string
-	PullSecretFile           string
-	Cloud                    string
-	CredsFile                string
-	ClusterImageSet          string
-	InstallerImage           string
-	ReleaseImage             string
-	ReleaseImageSource       string
-	DeleteAfter              string
-	ServingCert              string
-	ServingCertKey           string
-	UseClusterImageSet       bool
-	ManageDNS                bool
-	Output                   string
-	IncludeSecrets           bool
-	InstallOnce              bool
-	UninstallOnce            bool
-	SimulateBootstrapFailure bool
-	WorkerNodes              int64
+	Name                     string `json:"name"`
+	Namespace                string `json:"namespace"`
+	SSHPublicKeyFile         string `json:"sshPublicKeyFile"`
+	SSHPublicKey             string `json:"sshPublicKey"`
+	SSHPrivateKeyFile        string `json:"sshPrivateKeyFile"`
+	BaseDomain               string `json:"baseDomain"`
+	PullSecret               string `json:"pullSecret"`
+	PullSecretFile           string `json:"pullSecretFile"`
+	Cloud                    string `json:"cloud"`
+	CredsFile                string `json:"credsFile"`
+	ClusterImageSet          string `json:"clusterImageSet"`
+	InstallerImage           string `json:"installerImage"`
+	ReleaseImage             string `json:"releaseImage"`
+	ReleaseImageSource       string `json:"releaseImageSource"`
+	DeleteAfter              string `json:"deleteAfter"`
+	ServingCert              string `json:"servingCert"`
+	ServingCertKey           string `json:"servingCertKey"`
+	UseClusterImageSet       bool   `json:"useClusterImageSet"`
+	ManageDNS                bool   `json:"manageDNS"`
+	Output                   string `json:"output"`
+	IncludeSecrets           bool   `json:"includeSecrets"`
+	InstallOnce              bool   `json:"installOnce"`
+	UninstallOnce            bool   `json:"uninstallOnce"`
+	SimulateBootstrapFailure bool   `json:"simulateBootstrapFailure"`
+	WorkerNodes              int64  `json:"workerNodes"`
 
 	// Azure
 	AzureBaseDomainResourceGroupName string
