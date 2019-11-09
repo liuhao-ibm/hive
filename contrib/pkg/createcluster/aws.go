@@ -45,7 +45,7 @@ func (p *awsCloudProvider) addPlatformDetails(o *Options, cd *hivev1.ClusterDepl
 			Region: "us-east-1",
 		},
 	}
-	if o.CredsSecret != "" {
+	if o.CredsSecret == "" {
 		cd.Spec.PlatformSecrets = hivev1.PlatformSecrets{
 			AWS: &hivev1aws.PlatformSecrets{
 				Credentials: corev1.LocalObjectReference{
