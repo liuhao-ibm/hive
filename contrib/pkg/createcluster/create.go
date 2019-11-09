@@ -102,6 +102,7 @@ type Options struct {
 	PullSecretFile           string `json:"pullSecretFile"`
 	Cloud                    string `json:"cloud"`
 	CredsFile                string `json:"credsFile"`
+	CredsSecret              string `json:"credsSecret`
 	ClusterImageSet          string `json:"clusterImageSet"`
 	InstallerImage           string `json:"installerImage"`
 	ReleaseImage             string `json:"releaseImage"`
@@ -180,6 +181,7 @@ create-cluster CLUSTER_DEPLOYMENT_NAME --cloud=gcp --gcp-project-id=PROJECT_ID`,
 	flags.StringVar(&opt.DeleteAfter, "delete-after", "", "Delete this cluster after the given duration. (i.e. 8h)")
 	flags.StringVar(&opt.PullSecretFile, "pull-secret-file", defaultPullSecretFile, "Pull secret file for cluster")
 	flags.StringVar(&opt.CredsFile, "creds-file", "", "Cloud credentials file (defaults vary depending on cloud)")
+	flags.StringVar(&opt.CredsSecret, "creds-secret", "", "Cloud credentials secret (defaults vary depending on cloud)")
 	flags.StringVar(&opt.ClusterImageSet, "image-set", "", "Cluster image set to use for this cluster deployment")
 	flags.StringVar(&opt.InstallerImage, "installer-image", "", "Installer image to use for installing this cluster deployment")
 	flags.StringVar(&opt.ReleaseImage, "release-image", "", "Release image to use for installing this cluster deployment")
@@ -350,11 +352,13 @@ func (o *Options) GenerateObjects() ([]runtime.Object, error) {
 			result = append(result, pullSecret)
 		}
 
-		creds, err := o.cloudProvider.generateCredentialsSecret(o)
-		if err != nil {
-			return nil, err
+		if o.CredsSecret == "" {
+			creds, err := o.cloudProvider.generateCredentialsSecret(o)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, creds)
 		}
-		result = append(result, creds)
 
 		sshSecret, err := o.generateSSHSecret()
 		if err != nil {

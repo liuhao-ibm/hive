@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"path/filepath"
 
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	awsutils "github.com/openshift/hive/contrib/pkg/utils/aws"
 	hivev1 "github.com/openshift/hive/pkg/apis/hive/v1alpha1"
 	hivev1aws "github.com/openshift/hive/pkg/apis/hive/v1alpha1/aws"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var _ cloudProvider = (*awsCloudProvider)(nil)
@@ -46,13 +45,24 @@ func (p *awsCloudProvider) addPlatformDetails(o *Options, cd *hivev1.ClusterDepl
 			Region: "us-east-1",
 		},
 	}
-	cd.Spec.PlatformSecrets = hivev1.PlatformSecrets{
-		AWS: &hivev1aws.PlatformSecrets{
-			Credentials: corev1.LocalObjectReference{
-				Name: p.credsSecretName(o),
+	if o.CredsSecret != "" {
+		cd.Spec.PlatformSecrets = hivev1.PlatformSecrets{
+			AWS: &hivev1aws.PlatformSecrets{
+				Credentials: corev1.LocalObjectReference{
+					Name: p.credsSecretName(o),
+				},
 			},
-		},
+		}
+	} else {
+		cd.Spec.PlatformSecrets = hivev1.PlatformSecrets{
+			AWS: &hivev1aws.PlatformSecrets{
+				Credentials: corev1.LocalObjectReference{
+					Name: o.CredsSecret,
+				},
+			},
+		}
 	}
+
 	// Used for both control plane and workers.
 	mpp := &hivev1aws.MachinePoolPlatform{
 		InstanceType: "m4.large",
